@@ -1,36 +1,5 @@
-process.env.VERCEL = "1";
-let app;
-const candidates = [
-    "../app",
-    "../Backend/app",
-    "../backend/app",
-    "../src/app",
-    "../server",
-    "../Backend/server",
-    "../backend/server",
-    "../index",
-    "../Backend/index",
-    "../backend/index"
-];
-for (const cand of candidates) {
-    try {
-        app = require(cand);
-        if (app) break;
-    } catch (_) {}
-}
+const app = require('../app') || require('../server') || require('../src/app');
 
-if (app && typeof app.get === 'function') {
-    const handleRoot = (req, res) => {
-        res.status(200).json({
-            success: true,
-            status: "online",
-            message: "API server is live and running",
-            timestamp: new Date().toISOString()
-        });
-    };
-    app.get('/', handleRoot);
-    app.get('/health', handleRoot);
-    app.get('/api/health', handleRoot);
-}
-
-module.exports = app;
+module.exports = (req, res) => {
+  return app(req, res);
+};
